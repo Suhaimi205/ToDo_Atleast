@@ -1,32 +1,49 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sign Up</title>
-    <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; }
-        form { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 300px; }
-        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
-        button { width: 100%; padding: 10px; background: #6c63ff; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        button:hover { background: #5750d6; }
-    </style>
-</head>
-<body>
+<?php
+// signup.php
+include 'includes/header.php';
+include 'includes/db_connect.php';
 
-<form action="signup-check.php" method="post">
-    <h2>Sign Up</h2>
+$message = "";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
     
-    <label>Name</label>
-    <input type="text" name="name" placeholder="Name" required>
+    // Hash the password for security
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    <label>Email</label>
-    <input type="email" name="email" placeholder="Email" required>
+    // Basic validation and insertion
+    if (!empty($username) && !empty($email) && !empty($password)) {
+        $stmt = $conn->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, 'user')");
+        $stmt->bind_param("sss", $username, $email, $hashed_password);
 
-    <label>Password</label>
-    <input type="password" name="password" placeholder="Password" required>
+        if ($stmt->execute()) {
+            $message = "<p style='color:green;'>Registration successful! Please <a href='login.php'>login</a>.</p>";
+        } else {
+            $message = "<p style='color:red;'>Error: " . $stmt->error . "</p>";
+        }
+        $stmt->close();
+    } else {
+        $message = "<p style='color:red;'>All fields are required.</p>";
+    }
+}
 
-    <button type="submit">Sign Up</button>
-    <p>Already have an account? <a href="index.php">Login here</a></p>
-</form>
+$conn->close();
+?>
 
-</body>
-</html>
+    <div class="form-box">
+        <h3>User Sign Up</h3>
+        <?php echo $message; ?>
+        <form method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="login.php">Login here</a>.</p>
+    </div>
+
+<?php
+include 'includes/footer.php';
+?>

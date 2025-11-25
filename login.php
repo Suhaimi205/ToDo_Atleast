@@ -1,105 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ToDo System</title>
-    <style>
-        /* Simple CSS to match the clean look of your reference image */
-        body {
-            background: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-        }
-        .login-container {
-            background: white;
-            width: 350px;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        .login-container h2 {
-            margin-bottom: 20px;
-            color: #333;
-            text-align: center;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #666;
-            font-size: 14px;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box; /* Ensures padding doesn't widen the box */
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #6c63ff; /* Purple shade from your image */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover {
-            background: #5750d6;
-        }
-        .error {
-            background: #F2DEDE;
-            color: #A94442;
-            padding: 10px;
-            width: 100%;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-            text-align: center;
-            font-size: 14px;
-        }
-        .footer-link {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 14px;
-        }
-        .footer-link a {
-            color: #6c63ff;
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
+<?php
+// login.php
+include 'includes/header.php';
+include 'includes/db_connect.php';
 
-    <div class="login-container">
-        <form action="login.php" method="post">
-            <h2>Welcome Back</h2>
+$message = "";
 
-            <?php if (isset($_GET['error'])) { ?>
-                <p class="error"><?php echo $_GET['error']; ?></p>
-            <?php } ?>
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-            <label>User Name</label>
-            <input type="text" name="uname" placeholder="Enter your username">
+    $stmt = $conn->prepare("SELECT id, password, role FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Enter your password">
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+        
+        // Verify the hashed password
+        if (password_verify($password, $user['password'])) {
+            // Login successful: Set session variables
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['role'] = $user['role'];
 
-            <button type="submit">Sign in</button>
+            // Redirect to home page
+            header("Location: home.php");
+            exit();
+        } else {
+            $message = "<p style='color:red;'>Invalid email or password.</p>";
+        }
+    } else {
+        $message = "<p style='color:red;'>Invalid email or password.</p>";
+    }
+    $stmt->close();
+}
 
-            <div class="footer-link">
-                <p>Don't have an account? <a href="signup.php">Sign up</a></p>
-            </div>
+$conn->close();
+?>
+    <div class="form-box">
+        <h3>User Login</h3>
+        <?php echo $message; ?>
+        <form method="POST">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
         </form>
+        <p>Don't have an account? <a href="signup.php">Sign Up here</a>.</p>
     </div>
 
-</body>
-</html>
+<?php
+include 'includes/footer.php';
+?>
