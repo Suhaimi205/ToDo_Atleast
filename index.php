@@ -1,105 +1,60 @@
+<?php 
+// Start the session here if you haven't already in the calling script
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ToDo System</title>
-    <style>
-        /* Simple CSS to match the clean look of your reference image */
-        body {
-            background: #f0f2f5;
+    <title>To Do Dashboard</title>
+    <link rel="stylesheet" href="style.css"> <style>
+        /* Simple styling for the header */
+        .header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
+            padding: 15px 30px;
+            background-color: #f7f7f7;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .login-container {
-            background: white;
-            width: 350px;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        .login-container h2 {
-            margin-bottom: 20px;
+        .logo { font-size: 24px; font-weight: bold; color: #6c63ff; }
+        .profile-btn { 
+            padding: 8px 15px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            text-decoration: none; 
             color: #333;
-            text-align: center;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #666;
-            font-size: 14px;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box; /* Ensures padding doesn't widen the box */
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #6c63ff; /* Purple shade from your image */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover {
-            background: #5750d6;
-        }
-        .error {
-            background: #F2DEDE;
-            color: #A94442;
-            padding: 10px;
-            width: 100%;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-            text-align: center;
-            font-size: 14px;
-        }
-        .footer-link {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 14px;
-        }
-        .footer-link a {
-            color: #6c63ff;
-            text-decoration: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="login-container">
-        <form action="login.php" method="post">
-            <h2>Welcome Back</h2>
+    <header class="header">
+        <div class="logo">TheCubeFactory</div>
+        <nav>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="profile.php" class="profile-btn">Profile (<?php echo $_SESSION['username']; ?>)</a>
+                <a href="logout.php" class="profile-btn" style="margin-left: 10px;">Logout</a>
+            <?php else: ?>
+                <a href="login.php" class="profile-btn">Login / Sign Up</a>
+            <?php endif; ?>
+        </nav>
+    </header>
+    ```
 
-            <?php if (isset($_GET['error'])) { ?>
-                <p class="error"><?php echo $_GET['error']; ?></p>
-            <?php } ?>
+### B. The Footer File: `footer.php`
 
-            <label>User Name</label>
-            <input type="text" name="uname" placeholder="Enter your username">
+This file will contain the closing HTML tags and any site-wide footer information.
 
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Enter your password">
-
-            <button type="submit">Sign in</button>
-
-            <div class="footer-link">
-                <p>Don't have an account? <a href="signup.php">Sign up</a></p>
-            </div>
-        </form>
-    </div>
+```php
+    <footer>
+        <div style="text-align: center; padding: 20px; border-top: 1px solid #eee; margin-top: 40px; font-size: 14px;">
+            &copy; <?php echo date("Y"); ?> TheCubeFactory To Do System. All rights reserved.
+        </div>
+    </footer>
 
 </body>
 </html>
