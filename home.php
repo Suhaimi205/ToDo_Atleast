@@ -18,11 +18,13 @@ $message = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_task'])) {
     $task_description = $_POST['task_description'];
     $due_date = $_POST['due_date'];
+    $importance = $_POST['importance'];
 
     if (!empty($task_description)) {
         // Sanitize date input: ensure it's not empty string if date picker isn't used
         $due_date = empty($due_date) ? NULL : $due_date;
-        $stmt = $conn->prepare("INSERT INTO tasks (user_id, task_description, due_date, is_completed) VALUES (?, ?, ?, 0)");
+        $stmt = $conn->prepare("INSERT INTO tasks (user_id, task_description, due_date, importance, is_completed) VALUES (?, ?, ?, ?, 0)");
+        $stmt->bind_param("isss", $user_id, $task_description, $due_date, $importance);
         
         // Use 's' for NULL date parameter if it's set to NULL (MySQL handles NULL date strings)
         $param_type = $due_date === NULL ? "is" : "iss";
@@ -46,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_task'])) {
     }
 }
 
+
 // Handle Task Completion/Deletion (Existing logic)
 if (isset($_GET['complete_id'])) {
     $task_id = $_GET['complete_id'];
@@ -63,7 +66,7 @@ if (isset($_GET['complete_id'])) {
 // Fetch ALL tasks for the user
 $tasks = [];
 $tasks_by_date = []; // Array to map dates to tasks for calendar highlighting
-$result = $conn->query("SELECT id, task_description, due_date, is_completed FROM tasks WHERE user_id = $user_id ORDER BY due_date ASC, id DESC");
+$result = $conn->query("SELECT id, task_description, due_date, importance, is_completed FROM tasks WHERE user_id = $user_id ORDER BY FIELD(importance, 'high', 'medium', 'low'), due_date ASC, id DESC");
 
 if ($result) {
     while ($row = $result->fetch_assoc()) {
@@ -97,6 +100,7 @@ function draw_calendar($month, $year, $tasks_by_date) {
     $days_in_this_week = 1;
     $day_counter = 0;
     $dates_array = array();
+    
 
     /* row for week one */
     $calendar .= '<tr class="calendar-row">';
@@ -179,10 +183,17 @@ $conn->close();
     
     <div class="task-add">
         <h4>Add a New Task</h4>
-        <form method="POST" style="display: flex; gap: 10px;">
-            <input type="text" name="task_description" placeholder="Enter new task" required style="flex-grow: 2; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-            <input type="date" name="due_date" style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-            <button type="submit" name="add_task" style="flex-grow: 1; min-width: 100px;">Add Task</button>
+        <form method="POST" style="display: flex; gap: 10px; align-items: center;">
+        <input type="text" name="task_description" placeholder="Enter new task" required style="flex-grow: 2; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+        
+        <select name="importance" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            <option value="medium">Medium Priority</option>
+            <option value="high">High Priority</option>
+            <option value="low">Low Priority</option>
+        </select>
+        
+        <input type="date" name="due_date" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+        <button type="submit" name="add_task" style="padding: 10px;">Add Task</button>
         </form>
     </div>
 

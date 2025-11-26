@@ -89,8 +89,8 @@ header nav a:hover {
 footer {
     text-align: center;
     padding: 10px;
-    background-color: #333;
-    color: white;
+    background-color: #d6d6d6;
+    color: rgb(73, 73, 73);
     position: fixed;
     bottom: 0;
     width: 100%;
@@ -173,30 +173,40 @@ footer {
 
 /* --- Hero Section --- */
 .hero-section {
-    background-color: #eaf6ff; /* Very light blue background */
-    padding: 60px 20px;
+    /* 1. Set the image path (UPDATE THIS PATH!) */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('image/task.jpg'); /* Example path - UPDATE 'images/productivity_bg.jpg' */
+    
+    /* 2. Background properties for cover effect */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    /* 3. Padding and text alignment */
+    padding: 100px 40px; 
     text-align: center;
     border-radius: 8px;
-    margin-bottom: 20px;
-    border: 1px solid #cce0ff;
+    margin-bottom: 30px;
+    
+    /* 4. Ensure text is readable over the image */
+    color: white; /* Change text color to white */
+    position: relative; /* Needed for stacking context */
 }
 
 .hero-section h2 {
-    color: #0078d4;
-    font-size: 2.2em;
-    margin-bottom: 10px;
+    color: white; /* Ensure heading is white for readability on a background image */
+    font-size: 2.8em; 
+    font-weight: 300; 
 }
 
 .tagline {
-    font-size: 1.2em;
-    color: #555;
-    margin-bottom: 30px;
+    font-size: 1.4em;
+    color: #f0f0f0; /* Slightly off-white for tagline */
+    margin-bottom: 40px;
 }
-
 /* --- Call to Action Button --- */
 .cta-button {
     display: inline-block;
-    background-color: #00cc66; /* Bright Green for CTA */
+    background-color: #0078d4;
     color: white;
     padding: 12px 30px;
     text-decoration: none;
@@ -207,7 +217,7 @@ footer {
 }
 
 .cta-button:hover {
-    background-color: #00994d;
+    background-color: #47a1e6;
     transform: translateY(-2px);
 }
 
@@ -229,6 +239,11 @@ footer {
     text-align: center;
 }
 
+.feature-box i {
+    color: #31404b;
+    margin-right: 5px;
+}
+
 .feature-box h4 {
     color: #0078d4;
     margin-top: 0;
@@ -239,3 +254,4 @@ footer {
     text-align: center;
     padding: 20px 0;
 }
+

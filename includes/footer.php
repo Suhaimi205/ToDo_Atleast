@@ -3,7 +3,7 @@
 ?>
 </main>
 <footer>
-    <p>&copy; <?php echo date('Y'); ?> To Do List App. All Rights Reserved.</p>
+    <p>&copy; <?php echo date('Y'); ?> ToDo Atleast. All Rights Reserved Suhaimi205.</p>
 </footer>
 
 </body>
